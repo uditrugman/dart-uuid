@@ -2,20 +2,20 @@ import "package:test/test.dart";
 import 'package:uuid/uuid.dart';
 import 'package:uuid/uuid_util.dart';
 
-main() {
-  var uuid = new Uuid();
-  final int TIME = 1321644961388;
+dynamic main() {
+  Uuid uuid = new Uuid();
+  final int time = 1321644961388;
 
   group('[Version 1 Tests]', () {
     test('IDs created at same mSec are different', () {
-      expect(uuid.v1(options: {'mSecs': TIME}),
-          isNot(equals(uuid.v1(options: {'mSecs': TIME}))));
+      expect(uuid.v1(options: <String, dynamic>{'mSecs': time}),
+          isNot(equals(uuid.v1(options: <String, dynamic>{'mSecs': time}))));
     });
 
     test('Exception thrown when > 10K ids created in 1 ms', () {
-      var thrown = false;
+      bool thrown = false;
       try {
-        uuid.v1(options: {'mSecs': TIME, 'nSecs': 10000});
+        uuid.v1(options: <String, dynamic>{'mSecs': time, 'nSecs': 10000});
       } catch (e) {
         thrown = true;
       }
@@ -23,8 +23,8 @@ main() {
     });
 
     test('Clock regression by msec increments the clockseq - mSec', () {
-      var uidt = uuid.v1(options: {'mSecs': TIME});
-      var uidtb = uuid.v1(options: {'mSecs': TIME - 1});
+      String uidt = uuid.v1(options: <String, dynamic>{'mSecs': time});
+      String uidtb = uuid.v1(options: <String, dynamic>{'mSecs': time - 1});
 
       expect(
           (int.parse("0x${uidtb.split('-')[3]}") -
@@ -33,8 +33,8 @@ main() {
     });
 
     test('Clock regression by msec increments the clockseq - nSec', () {
-      var uidt = uuid.v1(options: {'mSecs': TIME, 'nSecs': 10});
-      var uidtb = uuid.v1(options: {'mSecs': TIME, 'nSecs': 9});
+      String uidt = uuid.v1(options: <String, dynamic>{'mSecs': time, 'nSecs': 10});
+      String uidtb = uuid.v1(options: <String, dynamic>{'mSecs': time, 'nSecs': 9});
 
       expect(
           (int.parse("0x${uidtb.split('-')[3]}") -
@@ -43,7 +43,7 @@ main() {
     });
 
     test('Explicit options produce expected id', () {
-      var id = uuid.v1(options: {
+      String id = uuid.v1(options: <String, dynamic>{
         'mSecs': 1321651533573,
         'nSecs': 5432,
         'clockSeq': 0x385c,
@@ -54,11 +54,11 @@ main() {
     });
 
     test('Ids spanning 1ms boundary are 100ns apart', () {
-      var u0 = uuid.v1(options: {'mSecs': TIME, 'nSecs': 9999});
-      var u1 = uuid.v1(options: {'mSecs': TIME + 1, 'nSecs': 0});
+      String u0 = uuid.v1(options: <String, dynamic>{'mSecs': time, 'nSecs': 9999});
+      String u1 = uuid.v1(options: <String, dynamic>{'mSecs': time + 1, 'nSecs': 0});
 
-      var before = u0.split('-')[0], after = u1.split('-')[0];
-      var dt = int.parse('0x$after') - int.parse('0x$before');
+      String before = u0.split('-')[0], after = u1.split('-')[0];
+      int dt = int.parse('0x$after') - int.parse('0x$before');
 
       expect(dt, equals(1));
     });
@@ -66,7 +66,7 @@ main() {
 
   group('[Version 4 Tests]', () {
     test('Check if V4 is consistent using a static seed', () {
-      var u0 = uuid.v4(options: {
+      String u0 = uuid.v4(options: <String, dynamic>{
         'rng': UuidUtil.mathRNG,
         'namedArgs': new Map.fromIterables([const Symbol('seed')], [1])
       });
@@ -75,7 +75,7 @@ main() {
     });
 
     test('Return same output as entered for "random" option', () {
-      var u0 = uuid.v4(options: {
+      String u0 = uuid.v4(options: <String, dynamic>{
         'random': [
           0x10,
           0x91,
@@ -101,7 +101,7 @@ main() {
 
     test('Make sure that really fast uuid.v4 doesn\'t produce duplicates', () {
       var list =
-          new List.filled(1000, null).map((something) => uuid.v4()).toList();
+          new List.filled(1000, null).map<dynamic>((something) => uuid.v4()).toList();
       var setList = list.toSet();
       expect(list.length, equals(setList.length));
     });
@@ -109,15 +109,15 @@ main() {
 
   group('[Version 5 Tests]', () {
     test('Using URL namespace and custom name', () {
-      var u0 = uuid.v5(Uuid.NAMESPACE_URL, 'www.google.com');
-      var u1 = uuid.v5(Uuid.NAMESPACE_URL, 'www.google.com');
+      String u0 = uuid.v5(Uuid.namespaceUrl, 'www.google.com');
+      String u1 = uuid.v5(Uuid.namespaceUrl, 'www.google.com');
 
       expect(u0, equals(u1));
     });
 
     test('Using Random namespace and custom name', () {
-      var u0 = uuid.v5(null, 'www.google.com');
-      var u1 = uuid.v5(null, 'www.google.com');
+      String u0 = uuid.v5(null, 'www.google.com');
+      String u1 = uuid.v5(null, 'www.google.com');
 
       expect(u0, isNot(equals(u1)));
     });

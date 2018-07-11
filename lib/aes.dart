@@ -11,13 +11,13 @@ library AES;
  */
 
 class AES {
-  static List cipher(List input, List keySchedule) {
+  static List<int> cipher(List<int> input, List<List<int>> keySchedule) {
     int blockSize = 4; //block size - fixed at 4 for AES
     int numRounds = keySchedule.length ~/ blockSize -
         1; // number of rounds (10/12/14 for 128/192/256-bit keys)
 
     // Initialize 4xNb byte-array 'state' with input [§3.4]
-    var state = <List<int>>[new List(4), new List(4), new List(4), new List(4)];
+    List<List<int>> state = <List<int>>[new List(4), new List(4), new List(4), new List(4)];
     for (int i = 0; i < 4 * blockSize; i++) {
       int r = i % 4;
       int c = (i ~/ 4).floor();
@@ -36,28 +36,28 @@ class AES {
     state = _shiftRows(state, blockSize);
     state = _addRoundKey(state, keySchedule, numRounds, blockSize);
 
-    var output = new List(4 * blockSize);
+    List<int> output = new List<int>(4 * blockSize);
     for (int i = 0; i < 4 * blockSize; i++) {
       output[i] = state[i % 4][(i ~/ 4).floor()];
     }
     return output;
   }
 
-  static List keyExpansion(List key) {
+  static List<List<int>> keyExpansion(List<int> key) {
     int blockSize = 4;
     int keyLength = key.length ~/ 4;
     int numRounds = keyLength + 6;
 
-    var keySchedule = new List((blockSize * (numRounds + 1)).toInt());
-    var temp = new List(4);
+    List<List<int>> keySchedule = new List((blockSize * (numRounds + 1)).toInt());
+    List<int> temp = new List(4);
 
     for (int i = 0; i < keyLength; i++) {
-      var row = [key[4 * i], key[4 * i + 1], key[4 * i + 2], key[4 * i + 3]];
+      List<int> row = [key[4 * i], key[4 * i + 1], key[4 * i + 2], key[4 * i + 3]];
       keySchedule[i] = row;
     }
 
     for (int i = keyLength; i < (blockSize * (numRounds + 1)); i++) {
-      keySchedule[i] = new List(4);
+      keySchedule[i] = new List<int>(4);
       for (int t = 0; t < 4; t++) {
         temp[t] = keySchedule[i - 1][t];
       }
@@ -87,7 +87,7 @@ class AES {
   }
 
   static List<List<int>> _shiftRows(List<List<int>> state, int blockSize) {
-    var temp = new List(4);
+    List<int> temp = new List<int>(4);
     for (int row = 1; row < 4; row++) {
       for (int column = 0; column < 4; column++) {
         temp[column] = state[row][(column + row) % blockSize];
@@ -101,8 +101,8 @@ class AES {
 
   static List<List<int>> _mixColumns(List<List<int>> state, int blockSize) {
     for (int column = 0; column < 4; column++) {
-      var a = new List(4);
-      var b = new List(4);
+      List<int> a = new List<int>(4);
+      List<int> b = new List<int>(4);
       for (int i = 0; i < 4; i++) {
         a[i] = state[i][column];
         b[i] = (state[i][column] & 0x80) != 0
@@ -119,7 +119,7 @@ class AES {
   }
 
   static List<List<int>> _addRoundKey(
-      List<List<int>> state, List keySchedule, int round, int blockSize) {
+      List<List<int>> state, List<List<int>> keySchedule, int round, int blockSize) {
     for (int row = 0; row < 4; row++) {
       for (int column = 0; column < blockSize; column++) {
         state[row][column] ^= keySchedule[round * 4 + column][row];
@@ -128,14 +128,14 @@ class AES {
     return state;
   }
 
-  static _subWord(List keySchedule) {
+  static List<int> _subWord(List<int> keySchedule) {
     for (int i = 0; i < 4; i++) {
-      _sBox[keySchedule[i]];
+      keySchedule[i] = _sBox[keySchedule[i]];
     }
     return keySchedule;
   }
 
-  static _rotWord(List keySchedule) {
+  static List<int> _rotWord(List<int> keySchedule) {
     var temp = keySchedule[0];
     for (int i = 0; i < 3; i++) {
       keySchedule[i] = keySchedule[i + 1];

@@ -22,7 +22,7 @@ dynamic main() {
       expect(thrown, equals(true));
     });
 
-    test('Clock regression by msec increments the clockseq - mSec', () {
+    test('Clock regression by msec increments the clockseq', () {
       String uidt = uuid.v1(options: <String, dynamic>{'mSecs': time});
       String uidtb = uuid.v1(options: <String, dynamic>{'mSecs': time - 1});
 
@@ -32,7 +32,7 @@ dynamic main() {
           anyOf(equals(1), equals(-16383)));
     });
 
-    test('Clock regression by nsec increments the clockseq - nSec', () {
+    test('Clock regression by nsec increments the clockseq', () {
       String uidt = uuid.v1(options: <String, dynamic>{'mSecs': time, 'nSecs': 10});
       String uidtb = uuid.v1(options: <String, dynamic>{'mSecs': time, 'nSecs': 9});
 

@@ -16,7 +16,7 @@ class AES {
     int numRounds = keySchedule.length ~/ blockSize -
         1; // number of rounds (10/12/14 for 128/192/256-bit keys)
 
-    // Initialize 4xNb byte-array 'state' with input [§3.4]
+    // Initialize 4xBlocksize byte-array 'state' with input [§3.4]
     List<List<int>> state = <List<int>>[new List(4), new List(4), new List(4), new List(4)];
     for (int i = 0; i < 4 * blockSize; i++) {
       int r = i % 4;
@@ -48,7 +48,7 @@ class AES {
     int keyLength = key.length ~/ 4;
     int numRounds = keyLength + 6;
 
-    List<List<int>> keySchedule = new List((blockSize * (numRounds + 1)).toInt());
+    List<List<int>> keySchedule = new List((blockSize * (numRounds + 1)));
     List<int> temp = new List(4);
 
     for (int i = 0; i < keyLength; i++) {

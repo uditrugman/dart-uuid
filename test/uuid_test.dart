@@ -32,7 +32,7 @@ dynamic main() {
           anyOf(equals(1), equals(-16383)));
     });
 
-    test('Clock regression by msec increments the clockseq - nSec', () {
+    test('Clock regression by nsec increments the clockseq - nSec', () {
       String uidt = uuid.v1(options: <String, dynamic>{'mSecs': time, 'nSecs': 10});
       String uidtb = uuid.v1(options: <String, dynamic>{'mSecs': time, 'nSecs': 9});
 

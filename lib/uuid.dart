@@ -131,7 +131,7 @@ class Uuid {
     int nSecs = (options['nSecs'] != null) ? options['nSecs'] : _lastNSecs + 1;
 
     // Time since last uuid creation (in msecs)
-    int dt = (mSecs - _lastMSecs) + (nSecs - _lastNSecs) ~/ 10000;
+    double dt = (mSecs - _lastMSecs) + (nSecs - _lastNSecs) / 10000;
 
     // Per 4.2.1.2, Bump clockseq on clock regression
     if (dt < 0 && options['clockSeq'] == null) {
@@ -157,23 +157,23 @@ class Uuid {
     mSecs += 12219292800000;
 
     // time Low
-    int tl = ((mSecs & 0xfffffff) ~/ 10000 + nSecs) % 0x100000000;
-    buf[i++] = tl >> 24 & 0xff;
-    buf[i++] = tl >> 16 & 0xff;
-    buf[i++] = tl >> 8 & 0xff;
+    int tl = ((mSecs & 0xfffffff) * 10000 + nSecs) % 0x100000000;
+    buf[i++] = (tl & 0xFFFFFFFF) >> 24 & 0xff;
+    buf[i++] = (tl & 0xFFFFFFFF) >> 16 & 0xff;
+    buf[i++] = (tl & 0xFFFFFFFF) >> 8 & 0xff;
     buf[i++] = tl & 0xff;
 
     // time mid
-    int tmh = (mSecs ~/ 0x100000000 ~/ 10000) & 0xfffffff;
-    buf[i++] = tmh >> 8 & 0xff;
-    buf[i++] = tmh & 0xff;
+    int tmh = (mSecs ~/ 0x100000000 * 10000) & 0xfffffff;
+    buf[i++] = (tmh & 0xFFFFFFFF) >> 8 & 0xff;
+    buf[i++] = (tmh & 0xFFFFFFFF) & 0xff;
 
     // time high and version
-    buf[i++] = tmh >> 24 & 0xf | 0x10; // include version
-    buf[i++] = tmh >> 16 & 0xff;
+    buf[i++] = (tmh & 0xFFFFFFFF) >> 24 & 0xf | 0x10; // include version
+    buf[i++] = (tmh & 0xFFFFFFFF) >> 16 & 0xff;
 
     // clockSeq high and reserved (Per 4.2.2 - include variant)
-    buf[i++] = clockSeq >> 8 | 0x80;
+    buf[i++] = (clockSeq & 0xFFFFFFFF) >> 8 | 0x80;
 
     // clockSeq low
     buf[i++] = clockSeq & 0xff;

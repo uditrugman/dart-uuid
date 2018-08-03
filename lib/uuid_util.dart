@@ -15,7 +15,7 @@ class UuidUtil {
       if ((i & 0x03) == 0) {
         rand = (_rand.nextDouble() * 0x100000000).floor().toInt();
       }
-      b[i] = rand >> ((i & 0x03) << 3) & 0xff;
+      b[i] = (rand & 0xFFFFFFFF) >> ((i & 0x03) << 3) & 0xff;
     }
 
     return b;

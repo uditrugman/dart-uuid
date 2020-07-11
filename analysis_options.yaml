@@ -12,6 +12,8 @@ linter:
     - unnecessary_brace_in_string_interps
 
 analyzer:
+  enable-experiment:
+    - non-nullable
   errors:
     invalid_assignment: warning
     missing_return: error
